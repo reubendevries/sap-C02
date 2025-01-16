@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Documentation can be found here: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/delete-objects.html
+# Exit immediately if any command returns a non-zero status.
+set -e
+
+BUCKET_NAME=$1
+
+# A quick description of what is going to happen.
+echo "Deletes all objects from the following Bucket: $BUCKET_NAME"
+
+# Initialize continuation token to handle pagination
+NEXT_TOKEN=""
+
+# Loop to handle pagination and fetch all objects in the bucket
+while true; do
+  # Run the AWS CLI command to list objects in the bucket with pagination support and query to extract only object keys
+  OBJECTS_JSON=$(aws s3api list-objects-v2 --bucket "$BUCKET_NAME" --query "Contents[].Key" --output text)
+
+  # If no objects are found, break the loop
+  if [ -z "$OBJECTS_JSON" ]; then
+    break
+  fi
+
+  # Loop over the returned object keys and delete each file
+  for OBJECT_KEY in $OBJECTS_JSON; do
+    echo "Deleting object: $OBJECT_KEY"
+    aws s3api delete-object --bucket "$BUCKET_NAME" --key "$OBJECT_KEY"
+  done
+
+  # Get the next continuation token for pagination (if exists)
+  NEXT_TOKEN=$(aws s3api list-objects-v2 --bucket "$BUCKET_NAME" --starting-token "$NEXT_TOKEN" --query "NextToken" --output text)
+
+  # Break the loop if there's no next continuation token
+  if [ "$NEXT_TOKEN" == "None" ]; then
+    break
+  fi
+done
+
+echo "All objects deleted from the bucket $BUCKET_NAME."

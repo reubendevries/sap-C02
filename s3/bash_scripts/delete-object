@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Documentation can be found here: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/delete-bucket.html
+# Exit immediately if any command returns a non-zero status.
+set -e 
+
+BUCKET_NAME=$1
+FILE_NAME=$2
+
+# A quick description of what is going to happen.
+echo "Deletes $FILENAME from the following Bucket: $BUCKET_NAME."
+
+# Checking to see if bucket name is provided
+if [ -z "$1" ]; then
+   echo "There needs to be a bucket name eg. ./list-objects-v2 my-bucket-name."
+   exit 1
+fi
+
+# Checking to see if file name is provided
+if [ -z "$2" ]; then
+   echo "There needs to be a filename to delete eg. ./list-objects-v2 my-bucket-name."
+   exit 1
+fi
+
+
+aws s3api delete-object --bucket "$BUCKET_NAME" --key "$FILE_NAME"
+
+echo "$FILENAME has now been deleted from the $BUCKET_NAME."

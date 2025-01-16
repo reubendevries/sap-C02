@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Documentation can be found here: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/list-buckets.html
+# Exit immediately if any command returns a non-zero status.
+set -e 
+
+# A quick description of what is going to happen.
+echo "Listing all buckets created, sorting by CreationDate"
+
+aws s3api list-buckets \
+--query "sort_by(Buckets, &CreationDate)[*]" \
+--output json

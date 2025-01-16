@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Documentation can be found here: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/list-objects-v2.html
+# Exit immediately if any command returns a non-zero status.
+set -e
+
+BUCKET_NAME=$1
+
+# A quick description of what is going to happen.
+echo "Listing all objects inside of bucket: $BUCKET_NAME"
+
+# Checking to see if at least one argument is provided
+if [ -z "$1" ]; then
+   echo "There needs to be a bucket name eg. ./list-objects-v2 my-bucket-name."
+   exit 1
+fi
+
+aws s3api list-objects-v2 \
+--bucket $BUCKET_NAME \
+--output json
